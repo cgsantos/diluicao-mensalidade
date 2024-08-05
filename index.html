@@ -83,6 +83,7 @@
           <button type="button" class="btn btn-primary" onclick="calcularDiluição()">Calcular</button>
         </form>
         <div id="resultados" class="results"></div>
+        <button type="button" id="emailButton" class="btn btn-success mt-3" style="display: none;" onclick="enviarEmail()">Enviar por Email</button>
       </div>
     </div>
   </div>
@@ -150,6 +151,16 @@
           </div>
         </div>
       `;
+      
+      document.getElementById('emailButton').style.display = 'block';
+    }
+
+    function enviarEmail() {
+      const resultados = document.getElementById('resultados').innerText;
+      const subject = "Resultado do Cálculo de Diluição";
+      const body = encodeURIComponent(resultados);
+      const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+      window.open(mailtoLink, '_blank');
     }
   </script>
   
