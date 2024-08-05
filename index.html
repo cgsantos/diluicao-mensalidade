@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Diluição - UNINASSAU</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 50px; /* Ajuste do espaço para o cabeçalho */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      flex: 1;
+      margin-top: 20px; /* Espaço entre o cabeçalho e o formulário */
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    footer {
+      padding: 20px 0;
+      background-color: #f8f9fa;
+      text-align: center;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+    }
+    header {
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+    .info-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header class="bg-primary text-white text-center py-3">
+    <h1>Calculadora de Diluição - UNINASSAU</h1>
+    <button type="button" class="btn btn-info info-btn" data-toggle="modal" data-target="#infoModal">
+      Como funciona?
+    </button>
+  </header>
+
+  <div class="container content">
+    <div class="card">
+      <div class="card-header bg-warning text-white text-center">
+        <h2>Calculadora de Diluição</h2>
+      </div>
+      <div class="card-body">
+        <form id="dilutionForm" class="text-center">
+          <div class="form-group">
+            <label for="mensalidade">Valor da Mensalidade:</label>
+            <input type="number" class="form-control" id="mensalidade" placeholder="Digite o valor da mensalidade">
+          </div>
+          <div class="form-group">
+            <label for="parcelas">Quantidade de Parcelas para Diluição:</label>
+            <input type="number" class="form-control" id="parcelas" placeholder="Digite a quantidade de parcelas">
+          </div>
+          <div class="form-group">
+            <label for="mesMatricula">Mês de Matrícula:</label>
+            <select class="form-control" id="mesMatricula">
+              <option value="07">Julho</option>
+              <option value="08">Agosto</option>
+              <option value="09">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11">Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="calcularDiluição()">Calcular</button>
+        </form>
+        <div id="resultados" class="results"></div>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>&copy; 2024 UNINASSAU</p>
+  </footer>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoModalLabel">Como Funciona?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Quando o aluno ingressa na UNINASSAU, ele contrata os 6 meses que chamamos de semestralidade.</p>
+          <p>Os 6 meses são: Julho, Agosto, Setembro, Outubro, Novembro e Dezembro.</p>
+          <p><strong>Valor das Mensalidades:</strong></p>
+          <p>De R$1.584,63 com 70% de desconto Por R$475,39. Comece pagando menos com o benefício SS (Ser Solidário). Pague só R$129,00 no ato da matrícula referente a Julho e R$129,00 referente a mensalidade de Agosto (disponível dentro do mês). Vamos dividir o que sobrar desses valores em outras parcelas até o fim do seu curso sem juros.</p>
+          <p><strong>Exemplo:</strong></p>
+          <ul>
+            <li>Mensalidade de Julho R$475,39 paga no ato R$129,00 e diluir o restante.</li>
+            <li>Mensalidade de Agosto R$475,39 paga R$129,00 + diluição de Julho.</li>
+            <li>Demais parcelas por R$475,39 + R$11,94 (diluição de Julho e Agosto / Ser Solidário).</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function calcularDiluição() {
+      const mensalidade = parseFloat(document.getElementById('mensalidade').value);
+      const parcelas = parseInt(document.getElementById('parcelas').value);
+      const mesMatricula = parseInt(document.getElementById('mesMatricula').value);
+      const valorFixo = 129.00;
+
+      let resultadoSubtracao;
+      let resultadoDivisao;
+      let valorTotalMensal;
+
+      if (mesMatricula >= 8) {
+        resultadoSubtracao = (mensalidade - valorFixo) * 2;
+        resultadoDivisao = resultadoSubtracao / parcelas;
+        valorTotalMensal = mensalidade + resultadoDivisao / 2;  // Diluindo em duas partes, porque temos julho e agosto
+      } else {
+        resultadoSubtracao = mensalidade - valorFixo;
+        resultadoDivisao = resultadoSubtracao / parcelas;
+        valorTotalMensal = mensalidade + resultadoDivisao;
+      }
+
+      document.getElementById('resultados').innerHTML = `
+        <div class="card">
+          <div class="card-body">
+            <p><strong>Resultado da Subtração (Valor da Mensalidade - Valor Matrícula):</strong> R$${resultadoSubtracao.toFixed(2)}</p>
+            <p><strong>Resultado da Divisão (Resto da mensalidade / Quantidade de semestres restantes):</strong> R$${resultadoDivisao.toFixed(2)} por parcela</p>
+            <p><strong>Previsão de Pagamento Mensal:</strong> R$${mensalidade.toFixed(2)} + R$${resultadoDivisao.toFixed(2)} = R$${valorTotalMensal.toFixed(2)}</p>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
